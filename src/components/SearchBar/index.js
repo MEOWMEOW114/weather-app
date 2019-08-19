@@ -11,10 +11,15 @@ import { UNITS } from '../../constants/units';
 
 const SearchBar = ({ onSubmit, units, onUnitsChange }) => {
   const searchText = React.createRef();
+  const latlng = React.createRef();
 
   const submitForm = e => {
     e.preventDefault();
-    onSubmit(searchText.current.value, units);
+    onSubmit({
+      cityName: searchText.current.value,
+      latlng: latlng.current.value,
+      units,
+    });
   };
 
   return (
@@ -40,6 +45,7 @@ const SearchBar = ({ onSubmit, units, onUnitsChange }) => {
           placeholder="Search city..."
           data-test-id="search-input"
         />
+        <FormControl ref={latlng} placeholder="Search by lat,lng" data-test-id="search-input" />
         <InputGroup.Append>
           <Button variant="outline-secondary" type="submit">
             Submit

@@ -15,6 +15,7 @@ import { fetchWeatherForecast, fetchUnitsIfNeeded } from './redux/weatherForcast
 
 const App = ({ fetchWeatherForecast, weatherForecast, fetchUnitsIfNeeded }) => {
   const { city, dailyForecast, error, loading, units } = weatherForecast;
+  console.log(error);
   return (
     <div className="App">
       <Navbar bg="dark" variant="dark">
@@ -29,7 +30,7 @@ const App = ({ fetchWeatherForecast, weatherForecast, fetchUnitsIfNeeded }) => {
         <Row className="justify-content-md-center">
           <Col xs lg="8">
             {/* {!error && !dailyForecast && !loading && <Welcome />} */}
-            {error && error.message.includes('404') && !loading && <CityNotFound />}
+            {error && !loading && <CityNotFound message={error.message} />}
           </Col>
         </Row>
         {!loading && city && (
