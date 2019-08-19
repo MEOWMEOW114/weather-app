@@ -28,6 +28,7 @@ class App extends React.Component {
       });
     }
   }
+
   render() {
     const {
       fetchWeatherForecast,
@@ -37,8 +38,8 @@ class App extends React.Component {
       isGeolocationEnabled,
       coords,
     } = this.props;
-    const { city, dailyForecast, error, loading, units } = weatherForecast;
-    console.log(weatherForecast);
+    const { city, dailyForecast, error, loading, units, recentResults } = weatherForecast;
+    console.log(recentResults);
 
     return (
       <div className="App">
@@ -74,6 +75,18 @@ class App extends React.Component {
           <Row className="justify-content-md-center">
             <Col xs>{loading && <Loading />}</Col>
           </Row>
+
+          {recentResults && (
+            <Row className="justify-content-md-center">
+              <Col xs>Recent searches:</Col>
+              {recentResults.map((item, index) => (
+                <Col xs key={index}>
+                  {index + 1} : <CityInfo city={item.city} />
+                  <br />
+                </Col>
+              ))}
+            </Row>
+          )}
         </Container>
       </div>
     );

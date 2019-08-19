@@ -3,6 +3,7 @@ import {
   FETCH_WEATHER_FORECAST_SUCCESS,
   FETCH_WEATHER_FORECAST_FAILURE,
   SET_TEMPERATURE_UNITS,
+  SET_LAST_RECENT_SEARCHES,
 } from '../../constants/actionTypes';
 
 import { UNITS } from '../../constants/units';
@@ -13,6 +14,7 @@ export const initialState = {
   city: null,
   error: null,
   units: UNITS.FAHRENHEIT,
+  recentResults: [],
 };
 
 const convertObjectForecastToArray = dailyForecastObj => {
@@ -75,12 +77,18 @@ const weatherForecastReducer = (state = initialState, action) => {
     case FETCH_WEATHER_FORECAST_FAILURE:
       return {
         ...initialState,
+        recentResults: state.recentResults,
         error: action.payload.error,
       };
     case SET_TEMPERATURE_UNITS:
       return {
         ...state,
         units: action.payload.units,
+      };
+    case SET_LAST_RECENT_SEARCHES:
+      return {
+        ...state,
+        recentResults: action.payload.recentResults,
       };
     default:
       return state;

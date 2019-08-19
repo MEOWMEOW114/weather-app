@@ -4,7 +4,9 @@ import {
   FETCH_WEATHER_FORECAST_SUCCESS,
   FETCH_WEATHER_FORECAST_FAILURE,
   SET_TEMPERATURE_UNITS,
+  SET_LAST_RECENT_SEARCHES,
 } from '../../constants/actionTypes';
+const LAST_RECENT_CACHE_SIZE = 3;
 
 const OPEN_WEATHER_API_KEY = process.env.REACT_APP_OPEN_WEATHER_API_KEY;
 //https://samples.openweathermap.org/data/2.5/forecast?lat=35&lon=139&appid=
@@ -30,7 +32,7 @@ export const fetchWeatherForecastFailure = error => ({
   },
 });
 
-export const fetchWeatherForecast = ({ cityName, latlng, units }) => async dispatch => {
+export const fetchWeatherForecast = ({ cityName, latlng, units }) => async (dispatch, getState) => {
   // TODO use formik for form input validation
   if (!cityName && !latlng) {
     dispatch(
@@ -51,18 +53,27 @@ export const fetchWeatherForecast = ({ cityName, latlng, units }) => async dispa
   }
   dispatch(fetchWeatherForecastStart());
   try {
+    const [lat, lon] = latlng.split(',');
     const response = await axios.get(FIVE_DAYS_URL, {
       params: {
         q: cityName || null,
         units, //units metric, imperial. When you do not use units parameter, format is Standard by default.
-        lat: !cityName ? latlng.split(',')[0] : null,
-        lon: !cityName ? latlng.split(',')[1] : null,
+        lat,
+        lon,
         appid: OPEN_WEATHER_API_KEY,
       },
     });
     const weatherForecast = response.data;
     console.log(weatherForecast);
     dispatch(fetchWeatherForecastSuccess(weatherForecast));
+
+    const state = getState();
+
+    let recentResults = state.weatherForecast.recentResults || [];
+    // TODO : add checking on city to avoid duplication
+    recentResults.splice(0, 0, weatherForecast);
+    recentResults = recentResults.slice(0, LAST_RECENT_CACHE_SIZE);
+    dispatch(setRecentResults(recentResults));
   } catch (exception) {
     dispatch(fetchWeatherForecastFailure(exception));
   }
@@ -72,6 +83,13 @@ export const setUnits = units => ({
   type: SET_TEMPERATURE_UNITS,
   payload: {
     units,
+  },
+});
+
+export const setRecentResults = recentResults => ({
+  type: SET_LAST_RECENT_SEARCHES,
+  payload: {
+    recentResults,
   },
 });
 
